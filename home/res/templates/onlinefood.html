@@ -1,0 +1,622 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>iCoder- Food</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+    <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=Amatic+SC:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+    
+
+    <style>
+        .msg {
+            margin-top: 100px;
+        }
+
+        .php-email-form {
+            font-size: 14px;
+            color: #fff;
+            {% comment %} background: var(--color-primary); {% endcomment %}
+            padding: 8px 20px;
+            margin-left: 30px;
+            border-radius: 50px;
+            transition: 0.3s;
+
+        }
+
+        .search {
+            margin-left: 221px;
+            }
+
+        .order{
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: 1px;
+        display: inline-block;
+        padding: 12px 36px;
+        border-radius: 50px;
+        transition: 0.5s;
+        color: #fff;
+        background: var(--color-primary);
+ 
+        }
+
+        {% block css %}{% endblock css %}
+        
+    </style>
+
+
+
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <a href="index.html" class="logo d-flex align-items-center me-auto me-lg-0">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <img src="{% static 'assets/img/logo.png' %}" alt="">
+                <h1>iCoder</h1>
+            </a>
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#menu">Menu</a></li>
+
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="/onlinefood">Online</a></li>
+
+                    <li><a href="/admin" target="__blank">Admin</a></li>
+                </ul>
+
+            </nav><!-- .navbar -->
+
+            <form class="d-flex" method="get" action="/search">
+                <input class="form-control mr-2 search" name='search' type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav mr-2">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href='#' id="navbarDropdown" role="button" data-toggle="dropdown">
+                  Welcome {{request.user.username}}</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">Profile</a>
+                  <a class="dropdown-item" href="{% url 'logoutuser' %}">Logout</a>
+    
+                </div>
+              </li>
+            </ul>
+          </div>
+          {% else %}
+            <!-- button login modal -->
+            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#loginModal">
+                Login
+            </button>
+
+
+            <!-- button signup modal -->
+            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#signupModal">
+                SignUp
+            </button>
+            {% endif %}
+        </div>
+    </header><!-- End Header -->
+
+    {% for message in messages %}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show msg" role="alert">
+        <strong>Message: </strong>{{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="signupModalTitle">SignUp Here</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% comment %} <form action="/signup" method='post'> {% endcomment %}
+                        <form action="{% url 'handlesignup' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="username">Username<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="username" name="username"
+                                    placeholder="Choose a unique username" Required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fname">First Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="fname" name="fname"
+                                    placeholder="Enter Your First Name" Required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lname">Last Name<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lname" name="lname"
+                                    placeholder="Enter Your Last Name" Required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email address<span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="name@example.com" Required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pass1">Choose a password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="pass1" name="pass1"
+                                    placeholder="Choose Your Password" Required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pass2">Confirm Password<span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="pass2" name="pass2"
+                                    placeholder="Enter your password again" Required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- login modal -->
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalTitle">Login Here</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'loginuser' %}" method="POST">
+                    {% comment %} <form method="POST"> {% endcomment %}
+                       {% csrf_token %}
+                        <div class="form-group">
+                            <label for="username">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="loginusername" name="username"
+                                placeholder="Choose a unique username" Required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pass">Enter your password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="pass" name="pass"
+                                placeholder="Enter your password " Required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ======= Hero Section ======= -->
+    <section id="hero" class="hero d-flex align-items-center section-bg">
+        <div class="container">
+            <div class="row justify-content-between gy-5">
+                <div
+                    class="col-lg-5 order-2 order-lg-1 d-flex flex-column justify-content-center align-items-center align-items-lg-start text-center text-lg-start">
+                    <h2 data-aos="fade-up">Enjoy Your Healthy<br>Delicious Food</h2>
+                    <p data-aos="fade-up" data-aos-delay="100">Sed autem laudantium dolores. Voluptatem itaque ea
+                        consequatur eveniet. Eum quas beatae cumque eum quaerat.</p>
+                    <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
+                        <a href="#book-a-table" class="btn-book-a-table">Book a Table</a>
+                        <a href="https://www.youtube.com/watch?v=LXb3EKWsInQ"
+                            class="glightbox btn-watch-video d-flex align-items-center"><i
+                                class="bi bi-play-circle"></i><span>Watch Video</span></a>
+                    </div>
+                </div>
+                <div class="col-lg-5 order-1 order-lg-2 text-center text-lg-start">
+                    <img src="{% static 'assets/img/hero-img.png' %}" class="img-fluid" alt="" data-aos="zoom-out"
+                        data-aos-delay="300">
+                </div>
+            </div>
+        </div>
+    </section><!-- End Hero Section -->
+
+
+
+    {% block body %}{% endblock body %}
+    <main id="main">      
+    <!-- ======= Menu Section ======= -->
+    <section id="menu" class="menu">
+        <div class="container" data-aos="fade-up">
+  
+          <div class="section-header">
+            <h2>Our Menu</h2>
+            <p>Check Our <span>Yummy Menu</span></p>
+          </div>
+  
+          <ul class="nav nav-tabs d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
+  
+            <li class="nav-item">
+              <a class="nav-link active show" data-bs-toggle="tab" data-bs-target="#menu-starters">
+                <h4>Starters</h4>
+              </a>
+            </li><!-- End tab nav item -->
+  
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#menu-breakfast">
+                <h4>Breakfast</h4>
+              </a><!-- End tab nav item -->
+  
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#menu-lunch">
+                <h4>Lunch</h4>
+              </a>
+            </li><!-- End tab nav item -->
+  
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" data-bs-target="#menu-dinner">
+                <h4>Dinner</h4>
+              </a>
+            </li><!-- End tab nav item -->
+  
+          </ul>
+  
+          <div class="tab-content" data-aos="fade-up" data-aos-delay="300">
+  
+            <div class="tab-pane fade active show" id="menu-starters">
+  
+              <div class="tab-header text-center">
+                <p>Menu</p>
+                <h3>Starters</h3>
+              </div>
+  
+              
+              <div class="row gy-5">
+                {% for item in allfood %}
+                <div class="col-lg-4 menu-item">
+                  <a href="/media/{{item.food_img}}" class="glightbox"><img src="/media/{{item.food_img}}" class="menu-img img-fluid" alt=""></a>
+                  <h4>{{item.food_title}}</h4>
+                  <p class="ingredients">
+                    {{item.food_desc}}
+                  </p>
+                  <p class="price">
+                    ${{item.food_price}}
+                  </p>
+                  {% if user.is_authenticated %}
+                  <form action="#" method="post">
+                    {% csrf_token %}
+                    <a href="/orderfood/{{item.food_id}}" class="btn-book-a-table order">Order Now</a>
+                    
+                    </form>
+                  {% else %}
+                  <a href="{% url 'loginuser' %}" class="btn-book-a-table order">Login to Order</a>
+                  {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            </div><!-- End Starter Menu Content -->
+  
+            <div class="tab-pane fade" id="menu-breakfast">
+              <div class="tab-header text-center">
+                <p>Menu</p>
+                <h3>Breakfast</h3>
+              </div>
+  
+              <div class="row gy-5">
+                {% for item in allfood %}
+                <div class="col-lg-4 menu-item">
+                  <a href="/media/{{item.food_img}}" class="glightbox"><img src="/media/{{item.food_img}}" class="menu-img img-fluid" alt=""></a>
+                  <h4>{{item.food_title}}</h4>
+                  <p class="ingredients">
+                    {{item.food_desc}}
+                  </p>
+                  <p class="price">
+                    ${{item.food_price}}
+                  </p>
+                  {% if user.is_authenticated %}
+                  <a href="{% url 'orderfood' %}" class="btn-book-a-table order">Order Now</a>
+                  {% else %}
+                  <a href="{% url 'loginuser' %}" class="btn-book-a-table order">Login to Order</a>
+
+                  {% endif %}
+                </div>
+                {% endfor %}
+  
+              </div>
+            </div><!-- End Breakfast Menu Content -->
+  
+            <div class="tab-pane fade" id="menu-lunch">
+  
+              <div class="tab-header text-center">
+                <p>Menu</p>
+                <h3>Lunch</h3>
+              </div>
+  
+              <div class="row gy-5">
+  
+                {% for item in allfood %}
+                <div class="col-lg-4 menu-item">
+                  <a href="/media/{{item.food_img}}" class="glightbox"><img src="/media/{{item.food_img}}" class="menu-img img-fluid" alt=""></a>
+                  <h4>{{item.food_title}}</h4>
+                  <p class="ingredients">
+                    {{item.food_desc}}
+                  </p>
+                  <p class="price">
+                    ${{item.food_price}}
+                  </p>
+                  {% if user.is_authenticated %}
+                  <a href="{% url 'orderfood' %}" class="btn-book-a-table order">Order Now</a>
+                  {% else %}
+                  <a href="{% url 'loginuser' %}" class="btn-book-a-table order">Login to Order</a>
+
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+            </div><!-- End Lunch Menu Content -->
+  
+            <div class="tab-pane fade" id="menu-dinner">
+  
+              <div class="tab-header text-center">
+                <p>Menu</p>
+                <h3>Dinner</h3>
+              </div>
+  
+              <div class="row gy-5">
+  
+                {% for item in allfood %}
+                <div class="col-lg-4 menu-item">
+                  <a href="/media/{{item.food_img}}" class="glightbox"><img src="/media/{{item.food_img}}" class="menu-img img-fluid" alt=""></a>
+                  <h4>{{item.food_title}}</h4>
+                  <p class="ingredients">
+                    {{item.food_desc}}
+                  </p>
+                  <p class="price">
+                    ${{item.food_price}}
+                  </p>
+                  {% if user.is_authenticated %}
+                  <a href="{% url 'orderfood' %}" class="btn-book-a-table order">Order Now</a>
+                  {% else %}
+                 <a href="{% url 'loginuser' %}" class="btn-book-a-table order">Login to Order</a>
+
+                  {% endif %}
+                </div>
+                {% endfor %}
+  
+              </div>
+            </div><!-- End Dinner Menu Content -->
+  
+          </div>
+  
+        </div>
+      </section><!-- End Menu Section -->
+    
+        <!-- ======= Contact Section ======= -->
+        <section id="contact" class="contact">
+            <div class="container" data-aos="fade-up">
+
+                <div class="section-header">
+                    <h2>Contact</h2>
+                    <p>Need Help? <span>Contact Us</span></p>
+                </div>
+
+                <div class="mb-3">
+                    <iframe style="border:0; width: 100%; height: 350px;"
+                        src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621"
+                        frameborder="0" allowfullscreen></iframe>
+                </div><!-- End Google Maps -->
+
+                <div class="row gy-4">
+
+                    <div class="col-md-6">
+                        <div class="info-item  d-flex align-items-center">
+                            <i class="icon bi bi-map flex-shrink-0"></i>
+                            <div>
+                                <h3>Our Address</h3>
+                                <p>A108 Adam Street, New York, NY 535022</p>
+                            </div>
+                        </div>
+                    </div><!-- End Info Item -->
+
+                    <div class="col-md-6">
+                        <div class="info-item d-flex align-items-center">
+                            <i class="icon bi bi-envelope flex-shrink-0"></i>
+                            <div>
+                                <h3>Email Us</h3>
+                                <p>contact@example.com</p>
+                            </div>
+                        </div>
+                    </div><!-- End Info Item -->
+
+                    <div class="col-md-6">
+                        <div class="info-item  d-flex align-items-center">
+                            <i class="icon bi bi-telephone flex-shrink-0"></i>
+                            <div>
+                                <h3>Call Us</h3>
+                                <p>+1 5589 55488 55</p>
+                            </div>
+                        </div>
+                    </div><!-- End Info Item -->
+
+                    <div class="col-md-6">
+                        <div class="info-item  d-flex align-items-center">
+                            <i class="icon bi bi-share flex-shrink-0"></i>
+                            <div>
+                                <h3>Opening Hours</h3>
+                                <div><strong>Mon-Sat:</strong> 11AM - 23PM;
+                                    <strong>Sunday:</strong> Closed
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Info Item -->
+
+                </div>
+
+                <form action="{% url 'contact' %}" method="post" role="form" class="php-email-form p-3 p-md-4">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-xl-6 form-group">
+                            <input type="text" name="name" class="form-control" id="name" placeholder="Your Name"
+                                required>
+                        </div>
+                        <div class="col-xl-6 form-group">
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Your Email"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" name="message" rows="5" placeholder="Message"
+                            required></textarea>
+                    </div>
+                    <div class="text-center"><button type="submit">Send Message</button></div>
+                </form>
+                <!--End Contact Form -->
+
+            </div>
+        </section><!-- End Contact Section -->
+
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+
+        <div class="container">
+            <div class="row gy-3">
+                <div class="col-lg-3 col-md-6 d-flex">
+                    <i class="bi bi-geo-alt icon"></i>
+                    <div>
+                        <h4>Address</h4>
+                        <p>
+                            A108 DCP Street <br>
+                            Pune, Pune 411 005 - IND<br>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-links d-flex">
+                    <i class="bi bi-telephone icon"></i>
+                    <div>
+                        <h4>Reservations</h4>
+                        <p>
+                            <strong>Phone:</strong> +1 5589 55488 55<br>
+                            <strong>Email:</strong> info@example.com<br>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-links d-flex">
+                    <i class="bi bi-clock icon"></i>
+                    <div>
+                        <h4>Opening Hours</h4>
+                        <p>
+                            <strong>Mon-Sat: 11AM</strong> - 23PM<br>
+                            Sunday: Closed
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-links">
+                    <h4>Follow Us</h4>
+                    <div class="social-links d-flex">
+                        <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="copyright">
+                &copy; Copyright <strong><span>iCoder</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                <!-- All the links in the footer should remain intact. -->
+                <!-- You can delete the links only if you purchased the pro version. -->
+                <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/yummy-bootstrap-restaurant-website-template/ -->
+                {% comment %} Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> {% endcomment %}
+            </div>
+        </div>
+
+    </footer><!-- End Footer -->
+    <!-- End Footer -->
+
+    <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+    <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    {% comment %}
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script> {% endcomment %}
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+    -->
+
+    <!-- Template Main JS File -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+</body>
+
+</html>

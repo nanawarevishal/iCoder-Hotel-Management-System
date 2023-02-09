@@ -1,0 +1,116 @@
+{% extends 'onlinefood.html' %}
+{% load static %}
+{% block css %}
+.btn1{
+    background: var(--color-primary);
+    border: 0;
+    padding: 14px 60px;
+    color: #fff;
+    transition: 0.4s;
+    border-radius: 50px;
+
+    .menu_item {
+     
+      margin-left: 96px;
+      width: 260px;
+      text-align: center;
+      margin-top: 68px;
+  }
+  .price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+}
+
+{% endblock css %}
+{% block body %}
+
+
+<div class="tab-header text-center">
+  <p>Menu</p>
+  <h3>Order details</h3>
+</div>
+<div class="row g-0">
+
+    <!-- <div class="col-lg-4 reservation-img" style="background-image: url({% static 'assets/img/reservation.jpg' %});" data-aos="zoom-out" data-aos-delay="200"> -->
+    <div class="col-lg-4 reservation-img " data-aos="zoom-out" data-aos-delay="200">
+    
+      <div class="row gy-5">
+        {% for item in orderdetails %}
+        <div class="col-lg-4 menu-item ordetails" style=" margin-left: 96px;
+        width: 260px;
+        text-align: center;
+        margin-top: 68px;">
+          <a href="/media/{{item.food_img}}" class="glightbox"><img src="/media/{{item.food_img}}" class="menu-img img-fluid" alt=""></a>
+          <h4>{{item.food_title}}</h4>
+          <p class="ingredients">
+            {{item.food_desc}}
+          </p>
+          <p class="price" style=" font-size: 24px;
+          font-weight: 700;
+          color: var(--color-primary);">
+            ${{item.food_price}}
+          </p>
+        
+        </div>
+        {% endfor %}
+      </div>
+    
+    </div>
+
+    {% for item in orderdetails %}
+
+    <div class="col-lg-8 d-flex align-items-center reservation-form-bg">
+      {% comment %} <form action="{% url 'order' %}" method="POST" role="form" class="php-email-form" > {% endcomment %}
+      <form action="/orderfood/{{item.food_id}}" method="POST" role="form" class="php-email-form" >
+        {% csrf_token %}
+        <div class="row gy-4">
+          <div class="col-lg-4 col-md-6">
+            <input type="text" name="name" value="{{name}}" class="form-control"  placeholder="Your Name"required>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="email" class="form-control" value="{{email}}" name="email"  placeholder="Your Email" required >
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="text" class="form-control" value="{{phone}}" name="phone"  placeholder="Your Phone" required>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="text" class="form-control" value="{{address}}" name="address"  placeholder="Your Address" required>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="number" class="form-control" value="{{dish}}" name="no_ofDish"  placeholder="No of dish" required>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="number" class="form-control" value="{{dish}}" name="food_type"  placeholder="No of dish" hidden>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="number" class="form-control" value="{{dish}}" name="food_title"  placeholder="No of dish" hidden>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="number" class="form-control" value="{{dish}}" name="food_price"  placeholder="No of dish" hidden>
+            <!-- <div class="validate"></div> -->
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <input type="number" class="form-control" value="{{dish}}" name="food_desc"  placeholder="No of dish" hidden>
+            <!-- <div class="validate"></div> -->
+          </div>
+        </div>
+        <div class="form-group mt-3">
+          <textarea class="form-control" value="{{msg}}" name="message" rows="5" placeholder="Message" required></textarea>
+          <!-- <div class="validate"></div> -->
+        </div>
+        <div class="text-center"><button type="submit" class="btn1">Order</button></div>
+      </form>
+    </div><!-- End Reservation Form -->
+    {% endfor %}
+  </div>
+
+{% endblock body %}
